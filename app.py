@@ -1,11 +1,11 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from db_converter import DatabaseConverter
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=os.path.dirname(__file__))
 CORS(app)
 
 # Configuration
@@ -23,6 +23,16 @@ app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 # Initialize database converter
 DATABASE_PATH = os.path.join(DATABASE_FOLDER, 'gpd_portal.db')
 db = DatabaseConverter(DATABASE_PATH, UPLOAD_FOLDER)
+
+@app.route('/')
+def home():
+    """Serve admin.html"""
+    return send_from_directory(os.path.dirname(__file__), 'admin.html')
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    """Serve static files"""
+    return send_from_directory(os.path.dirname(__file__), filename)
 
 @app.route('/api/upload-dataset', methods=['POST'])
 def upload_dataset():
