@@ -135,42 +135,73 @@ class DatabaseConverter:
             
             # Map columns
             df_mapped = self.map_columns(df, category)
-            
+
+            # If mapping produced no useful columns, fall back to dynamic table
+            dynamic_table = False
             if df_mapped.empty or len(df_mapped.columns) == 0:
-                return {
-                    'success': False,
-                    'error': 'No matching columns found in Excel file'
-                }
+                dynamic_table = True
+                # use original dataframe (normalized column names)
+                df_dynamic = df.copy()
+                df_dynamic.columns = [str(c).lower().strip().replace(' ', '_') for c in df_dynamic.columns]
+
+                # sanitize table name: prefer category (if provided), else filename base
+                if category and category.lower() in ['students', 'pastors', 'campuses']:
+                    table_name = category.lower()
+                else:
+                    base = os.path.splitext(os.path.basename(filepath))[0]
+                    table_name = ''.join(ch if ch.isalnum() or ch == '_' else '_' for ch in base.lower())
+
+                # create table dynamically with TEXT columns for each column in df_dynamic
+                col_defs = ', '.join([f"{col} TEXT" for col in df_dynamic.columns])
+                create_sql = f"CREATE TABLE IF NOT EXISTS {table_name} (id INTEGER PRIMARY KEY AUTOINCREMENT, {col_defs}, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
+                cursor = sqlite3.connect(self.database_path).cursor()
+                cursor.execute(create_sql)
+                cursor.connection.commit()
+                cursor.connection.close()
             
             # Insert into database
             conn = sqlite3.connect(self.database_path)
             cursor = conn.cursor()
-            
-            table_name = category
+
             success_count = 0
             error_count = 0
             errors = []
-            
-            for idx, row in df_mapped.iterrows():
-                try:
-                    # Prepare data
-                    columns = [col for col in df_mapped.columns if row[col] != '']
-                    values = [row[col] for col in columns]
-                    
-                    if not columns:
-                        continue
-                    
-                    placeholders = ','.join(['?' for _ in columns])
-                    insert_query = f'INSERT INTO {table_name} ({",".join(columns)}) VALUES ({placeholders})'
-                    
-                    cursor.execute(insert_query, values)
-                    success_count += 1
-                except sqlite3.IntegrityError as e:
-                    error_count += 1
-                    errors.append(f"Row {idx + 1}: {str(e)}")
-                except Exception as e:
-                    error_count += 1
-                    errors.append(f"Row {idx + 1}: {str(e)}")
+
+            if dynamic_table:
+                # insert using df_dynamic and table_name determined above
+                for idx, row in df_dynamic.iterrows():
+                    try:
+                        columns = list(df_dynamic.columns)
+                        values = [str(row[col]) for col in columns]
+                        placeholders = ','.join(['?' for _ in columns])
+                        insert_query = f'INSERT INTO {table_name} ({",".join(columns)}) VALUES ({placeholders})'
+                        cursor.execute(insert_query, values)
+                        success_count += 1
+                    except Exception as e:
+                        error_count += 1
+                        errors.append(f"Row {idx + 1}: {str(e)}")
+            else:
+                table_name = category
+                for idx, row in df_mapped.iterrows():
+                    try:
+                        # Prepare data
+                        columns = [col for col in df_mapped.columns if row[col] != '']
+                        values = [row[col] for col in columns]
+
+                        if not columns:
+                            continue
+
+                        placeholders = ','.join(['?' for _ in columns])
+                        insert_query = f'INSERT INTO {table_name} ({",".join(columns)}) VALUES ({placeholders})'
+
+                        cursor.execute(insert_query, values)
+                        success_count += 1
+                    except sqlite3.IntegrityError as e:
+                        error_count += 1
+                        errors.append(f"Row {idx + 1}: {str(e)}")
+                    except Exception as e:
+                        error_count += 1
+                        errors.append(f"Row {idx + 1}: {str(e)}")
             
             conn.commit()
             
