@@ -1,295 +1,219 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>Upload Individual Data - GPD Admin Portal</title>
-        <link rel="stylesheet" href="css_file/style.css">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            body {
-                font-family: Arial, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                padding: 40px 20px;
-            }
-            
-            .container {
-                max-width: 700px;
-                margin: 0 auto;
-                background: white;
-                padding: 40px;
-                border-radius: 15px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            }
-            
-            .back-btn {
-                display: inline-block;
-                margin-bottom: 20px;
-                color: #667eea;
-                text-decoration: none;
-                font-weight: bold;
-                cursor: pointer;
-            }
-            
-            .back-btn:hover {
-                text-decoration: underline;
-            }
-            
-            h1 {
-                color: #333;
-                margin-bottom: 10px;
-                text-align: center;
-            }
-            
-            .description {
-                color: #666;
-                text-align: center;
-                margin-bottom: 30px;
-                font-size: 0.95em;
-            }
-            
-            .form-group {
-                margin-bottom: 25px;
-            }
-            
-            label {
-                display: block;
-                margin-bottom: 8px;
-                color: #333;
-                font-weight: bold;
-            }
-            
-            input[type="text"],
-            input[type="email"],
-            input[type="number"],
-            input[type="date"],
-            select,
-            textarea {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                font-family: Arial, sans-serif;
-                font-size: 1em;
-            }
-            
-            input:focus,
-            select:focus,
-            textarea:focus {
-                outline: none;
-                border-color: #667eea;
-                box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-            }
-            
-            textarea {
-                resize: vertical;
-                min-height: 100px;
-            }
-            
-            .form-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-            }
-            
-            .button-group {
-                display: flex;
-                gap: 10px;
-                margin-top: 30px;
-            }
-            
-            button {
-                flex: 1;
-                padding: 12px 20px;
-                border: none;
-                border-radius: 5px;
-                font-size: 1em;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-weight: bold;
-            }
-            
-            .submit-btn {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-            }
-            
-            .submit-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            }
-            
-            .submit-btn:active {
-                transform: translateY(0);
-            }
-            
-            .cancel-btn {
-                background: #f0f0f0;
-                color: #333;
-            }
-            
-            .cancel-btn:hover {
-                background: #e0e0e0;
-            }
-            
-            .success-message {
-                display: none;
-                padding: 15px;
-                background: #d4edda;
-                color: #155724;
-                border-radius: 5px;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <a href="admin.html" class="back-btn">← Back to Admin Panel</a>
-            
-            <h1>📝 Upload Data Individually</h1>
-            <p class="description">Add single records or entries one at a time with detailed forms</p>
-            
-            <div class="success-message" id="successMsg">
-                Record added successfully!
-            </div>
-            
-            <form id="individualForm">
-                <div class="form-group">
-                    <label for="dataType">Data Type:</label>
-                    <select id="dataType" required onchange="updateFormFields()">
-                        <option value="">Select Data Type</option>
-                        <option value="student">Student</option>
-                        <option value="pastor">Pastor</option>
-                        <option value="campus">Campus</option>
-                    </select>
-                </div>
-                
-                <div id="studentFields" class="hidden">
-                    <div class="form-group">
-                        <label for="fullName">Full Name:</label>
-                        <input type="text" id="fullName" placeholder="Enter student's full name">
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="studentId">Student ID:</label>
-                            <input type="text" id="studentId" placeholder="Enter student ID">
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" placeholder="Enter email address">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="department">Department:</label>
-                            <input type="text" id="department" placeholder="Enter department">
-                        </div>
-                        <div class="form-group">
-                            <label for="year">Year:</label>
-                            <select id="year">
-                                <option>Select Year</option>
-                                <option>100 Level</option>
-                                <option>200 Level</option>
-                                <option>300 Level</option>
-                                <option>400 Level</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="pastorFields" class="hidden">
-                    <div class="form-group">
-                        <label for="pastorName">Full Name:</label>
-                        <input type="text" id="pastorName" placeholder="Enter pastor's full name">
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="pastorEmail">Email:</label>
-                            <input type="email" id="pastorEmail" placeholder="Enter email address">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone:</label>
-                            <input type="text" id="phone" placeholder="Enter phone number">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="assignment">Assignment/Church:</label>
-                        <input type="text" id="assignment" placeholder="Enter church or assignment">
-                    </div>
-                </div>
-                
-                <div id="campusFields" class="hidden">
-                    <div class="form-group">
-                        <label for="campusName">Campus Name:</label>
-                        <input type="text" id="campusName" placeholder="Enter campus name">
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="location">Location:</label>
-                            <input type="text" id="location" placeholder="Enter campus location">
-                        </div>
-                        <div class="form-group">
-                            <label for="coordinates">Coordinates:</label>
-                            <input type="text" id="coordinates" placeholder="e.g., 6.5244, 3.3792">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="notes">Additional Notes:</label>
-                    <textarea id="notes" placeholder="Add any additional notes or comments..."></textarea>
-                </div>
-                
-                <div class="button-group">
-                    <button type="submit" class="submit-btn">Add Record</button>
-                    <button type="reset" class="cancel-btn">Clear Form</button>
-                </div>
-            </form>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Upload Individual Data - GPD Admin Portal</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .nav {
+      background: #003366;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav .brand {
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .nav nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .nav nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      padding: 25px;
+      min-height: 70vh;
+      background: white;
+      margin: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .footer {
+      background: #003366;
+      padding: 15px;
+      text-align: center;
+      color: white;
+      font-size: 14px;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .hidden { display: none; }
+
+    /* small form styles */
+    form label{display:block;margin:8px 0 6px;font-weight:600}
+    input[type=text]{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .button-group{display:flex;gap:10px;margin-top:18px}
+    button{padding:10px 14px;border-radius:6px;border:none;cursor:pointer}
+    .submit-btn{background:#003366;color:#fff}
+    .cancel-btn{background:#eee}
+    .note{color:#555;margin-top:8px}
+
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="brand">GPD Admin Portal</div>
+    <nav>
+      <a href="#">Dashboard</a>
+      <a href="#">Records</a>
+      <a href="#">Settings</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>Upload Individual Data</h2>
+    <p class="note">Choose a category and fill the fields. "Group Regional" currently has no extra questions.</p>
+
+    <form id="individualForm">
+      <label for="dataType">Category</label>
+      <select id="dataType" required onchange="updateFormFields()">
+        <option value="">Select Category</option>
+        <option value="regional">Regional</option>
+        <option value="group_regional">Group Regional</option>
+      </select>
+
+      <div id="regionalFields" class="hidden">
+        <div class="form-row" style="margin-top:12px">
+          <div>
+            <label for="region">Region</label>
+            <input type="text" id="region" placeholder="Enter region" required />
+          </div>
+          <div>
+            <label for="designation">Designation</label>
+            <input type="text" id="designation" placeholder="Enter designation" required />
+          </div>
         </div>
-        
-        <script>
-            const form = document.getElementById('individualForm');
-            const successMsg = document.getElementById('successMsg');
-            
-            function updateFormFields() {
-                const dataType = document.getElementById('dataType').value;
-                document.getElementById('studentFields').style.display = dataType === 'student' ? 'block' : 'none';
-                document.getElementById('pastorFields').style.display = dataType === 'pastor' ? 'block' : 'none';
-                document.getElementById('campusFields').style.display = dataType === 'campus' ? 'block' : 'none';
-            }
-            
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const dataType = document.getElementById('dataType').value;
-                if (!dataType) {
-                    alert('Please select a data type');
-                    return;
-                }
-                
-                // Simulate submission
-                successMsg.style.display = 'block';
-                
-                setTimeout(() => {
-                    form.reset();
-                    document.getElementById('studentFields').style.display = 'none';
-                    document.getElementById('pastorFields').style.display = 'none';
-                    document.getElementById('campusFields').style.display = 'none';
-                    successMsg.style.display = 'none';
-                }, 3000);
-            });
-        </script>
-    </body>
+
+        <div style="margin-top:12px">
+          <label for="reg_name">Name</label>
+          <input type="text" id="reg_name" placeholder="Enter name" required />
+        </div>
+
+        <div class="form-row" style="margin-top:12px">
+          <div>
+            <label for="kc_id">KC ID</label>
+            <input type="text" id="kc_id" placeholder="Enter KC ID" required />
+          </div>
+          <div>
+            <label for="blw_zone">BLW Zone</label>
+            <input type="text" id="blw_zone" placeholder="Enter BLW Zone" required />
+          </div>
+        </div>
+      </div>
+
+      <div id="rzmFields" class="hidden" style="margin-top:12px">
+        <p><em>No questions provided yet for Group Regional.</em></p>
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="submit-btn">Add Record</button>
+        <button type="reset" class="cancel-btn">Clear</button>
+      </div>
+    </form>
+
+    <div id="successMsg" class="modal hidden">
+      <div style="background:white;padding:20px;border-radius:8px;min-width:300px;text-align:center">
+        <h3>Success</h3>
+        <p id="successText">Record added successfully.</p>
+        <div style="margin-top:12px">
+          <button onclick="closeModal()">OK</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">GPD Portal — ©️ All rights reserved</footer>
+
+  <script>
+    function updateFormFields(){
+      const type = document.getElementById('dataType').value;
+      document.getElementById('regionalFields').classList.toggle('hidden', type !== 'regional');
+      document.getElementById('rzmFields').classList.toggle('hidden', type !== 'group_regional');
+    }
+
+    // Insert single record via API
+    async function insertToDB(record){
+      const API_URL = window.location.origin || 'http://localhost:5000';
+      try{
+        const resp = await fetch(API_URL + '/api/add-record', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        });
+        return await resp.json();
+      }catch(err){
+        return { success: false, error: err.message };
+      }
+    }
+
+    function closeModal(){
+      document.getElementById('successMsg').classList.add('hidden');
+    }
+
+    document.getElementById('individualForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      const type = document.getElementById('dataType').value;
+      if(!type){ alert('Please select a category'); return; }
+
+      const payload = { type };
+      if(type === 'regional'){
+        payload.region = document.getElementById('region').value.trim();
+        payload.designation = document.getElementById('designation').value.trim();
+        payload.name = document.getElementById('reg_name').value.trim();
+        payload.kc_id = document.getElementById('kc_id').value.trim();
+        payload.blw_zone = document.getElementById('blw_zone').value.trim();
+      }
+
+      const result = await insertToDB(payload);
+      const modal = document.getElementById('successMsg');
+      const successText = document.getElementById('successText');
+      if(result && result.success){
+        successText.textContent = result.message || 'Record added successfully.';
+        modal.classList.remove('hidden');
+        console.log('DB Insert OK:', payload);
+        // reset form after success
+        document.getElementById('individualForm').reset();
+        updateFormFields();
+      } else {
+        const errMsg = result ? (result.error || result.message) : 'Unknown error';
+        successText.textContent = 'Failed: ' + errMsg;
+        modal.classList.remove('hidden');
+        console.error('DB Insert Failed:', errMsg);
+      }
+    });
+  </script>
+</body>
 </html>

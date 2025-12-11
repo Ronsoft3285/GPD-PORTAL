@@ -235,162 +235,183 @@
             
             <div class="upload-results" id="uploadResults"></div>
             
-            <form id="datasetForm">
-                <div class="form-group">
-                    <label>Select Dataset File:</label>
-                    <div class="drag-drop" id="dragDrop">
-                        <p>Drag & Drop your file here</p>
-                        <p style="font-size: 0.9em;">or click to browse</p>
-                        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
-                    </div>
-                    <p id="fileName" style="margin-top: 10px; color: #666; font-size: 0.9em;"></p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="category">Category:</label>
-                    <select id="category" required>
-                        <option value="">Select Category</option>
-                        <option value="students">Students</option>
-                        <option value="pastors">Pastors</option>
-                        <option value="campuses">Campuses</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" placeholder="Enter a brief description of this dataset..."></textarea>
-                </div>
-                
-                <div class="button-group">
-                    <button type="submit" class="upload-btn">Upload Dataset</button>
-                    <button type="reset" class="cancel-btn">Clear Form</button>
-                </div>
-            </form>
+            <form id="datasetForm" method="POST" action="/upload" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Select Dataset File:</label>
+        <div class="drag-drop" id="dragDrop">
+            <p>Drag & Drop your file here</p>
+            <p style="font-size: 0.9em;">or click to browse</p>
+            <input type="file" id="fileInput" name="file" accept=".xlsx,.xls" style="display: none;">
+        </div>
+        <p id="fileName" style="margin-top: 10px; color: #666; font-size: 0.9em;"></p>
+    </div>
+    
+    <div class="form-group">
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+            <option value="">Select Category</option>
+            <option value="regional">Regional/Zonal Sec</option>
+            <option value="group_regional">Group Regional/RZM</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" placeholder="Enter a brief description of this dataset..."></textarea>
+    </div>
+    
+    <div class="button-group">
+        <button type="submit" class="upload-btn">Upload Dataset</button>
+        <button type="reset" class="cancel-btn">Clear Form</button>
+    </div>
+</form>
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="{{ category }}-message" style="margin-top: 20px;">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
         </div>
         
         <script>
-            const dragDrop = document.getElementById('dragDrop');
-            const fileInput = document.getElementById('fileInput');
-            const fileName = document.getElementById('fileName');
-            const form = document.getElementById('datasetForm');
-            const errorMsg = document.getElementById('errorMsg');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const uploadResults = document.getElementById('uploadResults');
-            
-            // Configuration
-            const API_URL = 'http://localhost:5000';
-            
-            // Click to browse
-            dragDrop.addEventListener('click', () => fileInput.click());
-            
-            // Drag and drop events
-            dragDrop.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dragDrop.classList.add('dragover');
-            });
-            
-            dragDrop.addEventListener('dragleave', () => {
-                dragDrop.classList.remove('dragover');
-            });
-            
-            dragDrop.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dragDrop.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    fileInput.files = files;
-                    displayFileName(files[0]);
-                }
-            });
-            
-            // File input change
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    displayFileName(e.target.files[0]);
-                }
-            });
-            
-            function displayFileName(file) {
-                fileName.textContent = `📄 Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+    const dragDrop = document.getElementById('dragDrop');
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const form = document.getElementById('datasetForm');
+    const errorMsg = document.getElementById('errorMsg');
+    const uploadResults = document.getElementById('uploadResults');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    
+    // --- File Selection Logic ---
+
+    // Click to browse
+    dragDrop.addEventListener('click', () => fileInput.click());
+    
+    // Drag and drop events
+    dragDrop.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dragDrop.classList.add('dragover');
+    });
+    
+    dragDrop.addEventListener('dragleave', () => {
+        dragDrop.classList.remove('dragover');
+    });
+    
+    dragDrop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dragDrop.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+    });
+    
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+    
+    function handleFiles(files) {
+        if (files.length > 0) {
+            const f = files[0];
+            // Allow xls, xlsx, and csv
+            const ext = f.name.split('.').pop().toLowerCase();
+            if (!['xls','xlsx','csv'].includes(ext)) {
+                showError('Only Excel (.xlsx, .xls) or CSV files are allowed');
+                fileInput.value = ''; // Reset
+                fileName.textContent = '';
+                return;
             }
-            
-            function showError(message) {
-                errorMsg.textContent = `❌ Error: ${message}`;
-                errorMsg.style.display = 'block';
-                setTimeout(() => {
-                    errorMsg.style.display = 'none';
-                }, 5000);
+            // Manually set the files property if coming from drag-drop
+            if (fileInput.files !== files) {
+                fileInput.files = files;
             }
-            
-            function showLoading(show) {
-                loadingSpinner.style.display = show ? 'block' : 'none';
-            }
-            
-            function showResults(data) {
-                let html = `
-                    <h3>✅ Upload Complete</h3>
-                    <p><strong>Category:</strong> ${data.category}</p>
-                    <p><strong>Records Inserted:</strong> ${data.records_inserted}</p>
-                `;
-                
-                if (data.errors > 0) {
-                    html += `<p style="color: #d9534f;"><strong>Errors:</strong> ${data.errors}</p>`;
-                    if (data.error_details && data.error_details.length > 0) {
-                        html += '<details><summary>Show Errors</summary><pre style="background: #fff; padding: 10px; border-radius: 3px; overflow-x: auto;">';
-                        html += data.error_details.join('\n');
-                        html += '</pre></details>';
-                    }
-                }
-                
-                uploadResults.innerHTML = html;
-                uploadResults.style.display = 'block';
-            }
-            
-            // Form submission
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                if (!fileInput.files.length) {
-                    showError('Please select a file');
-                    return;
-                }
-                
-                if (!document.getElementById('category').value) {
-                    showError('Please select a category');
-                    return;
-                }
-                
-                errorMsg.style.display = 'none';
-                uploadResults.style.display = 'none';
-                showLoading(true);
-                
-                try {
-                    const formData = new FormData();
-                    formData.append('file', fileInput.files[0]);
-                    formData.append('category', document.getElementById('category').value);
-                    formData.append('description', document.getElementById('description').value);
-                    
-                    const response = await fetch(`${API_URL}/api/upload-dataset`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    const data = await response.json();
-                    showLoading(false);
-                    
-                    if (response.ok && data.success) {
-                        showResults(data);
-                        form.reset();
-                        fileName.textContent = '';
-                    } else {
-                        showError(data.error || 'Upload failed');
-                    }
-                } catch (error) {
-                    showLoading(false);
-                    showError(`Connection error: ${error.message}`);
-                    console.error('Upload error:', error);
-                }
+            displayFileName(f);
+        }
+    }
+
+    function displayFileName(file) {
+        fileName.textContent = `📄 Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+        // clear previous errors/results when new file selected
+        errorMsg.style.display = 'none';
+        uploadResults.style.display = 'none';
+    }
+
+    // --- Helper Functions ---
+
+    function showError(message) {
+        errorMsg.textContent = `❌ ${message}`;
+        errorMsg.style.display = 'block';
+        loadingSpinner.style.display = 'none';
+    }
+
+    function showSuccess(data) {
+        let html = `<h3>✅ Upload Complete</h3>`;
+        html += `<p><strong>Message:</strong> ${data.message}</p>`;
+        html += `<p><strong>Records Inserted:</strong> ${data.records_inserted}</p>`;
+        
+        if (data.errors > 0) {
+             html += `<p style="color:orange"><strong>Errors:</strong> ${data.errors} rows failed (check logs)</p>`;
+        }
+        
+        uploadResults.innerHTML = html;
+        uploadResults.style.display = 'block';
+        loadingSpinner.style.display = 'none';
+        
+        // Clear form
+        form.reset();
+        fileName.textContent = '';
+    }
+
+    // --- Form Submission (The Real Upload) ---
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // 1. Validation
+        if (!fileInput.files.length) {
+            showError('Please select a file first.');
+            return;
+        }
+
+        const category = document.getElementById('category').value;
+        if (!category) {
+            showError('Please select a category.');
+            return;
+        }
+
+        // 2. Prepare Data
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('category', category);
+        formData.append('description', document.getElementById('description').value);
+
+        // 3. UI Updates
+        loadingSpinner.style.display = 'block';
+        errorMsg.style.display = 'none';
+        uploadResults.style.display = 'none';
+
+        // 4. Send Request to Backend
+        try {
+            const response = await fetch('/api/upload-dataset', {
+                method: 'POST',
+                body: formData
             });
-        </script>
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showSuccess(result);
+            } else {
+                showError(result.error || 'Upload failed due to server error.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('Network error. Is the server running?');
+        }
+    });
+</script>
     </body>
 </html>

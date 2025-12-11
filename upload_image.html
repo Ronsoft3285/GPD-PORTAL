@@ -1,342 +1,193 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>Upload Image - GPD Admin Portal</title>
-        <link rel="stylesheet" href="css_file/style.css">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            body {
-                font-family: Arial, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                padding: 40px 20px;
-            }
-            
-            .container {
-                max-width: 700px;
-                margin: 0 auto;
-                background: white;
-                padding: 40px;
-                border-radius: 15px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            }
-            
-            .back-btn {
-                display: inline-block;
-                margin-bottom: 20px;
-                color: #667eea;
-                text-decoration: none;
-                font-weight: bold;
-                cursor: pointer;
-            }
-            
-            .back-btn:hover {
-                text-decoration: underline;
-            }
-            
-            h1 {
-                color: #333;
-                margin-bottom: 10px;
-                text-align: center;
-            }
-            
-            .description {
-                color: #666;
-                text-align: center;
-                margin-bottom: 30px;
-                font-size: 0.95em;
-            }
-            
-            .form-group {
-                margin-bottom: 25px;
-            }
-            
-            label {
-                display: block;
-                margin-bottom: 8px;
-                color: #333;
-                font-weight: bold;
-            }
-            
-            .drag-drop {
-                border: 2px dashed #667eea;
-                padding: 60px 20px;
-                text-align: center;
-                border-radius: 10px;
-                background: #f8f9ff;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-            
-            .drag-drop:hover {
-                background: #f0f1ff;
-                border-color: #764ba2;
-            }
-            
-            .drag-drop.dragover {
-                background: #e8eaff;
-                border-color: #764ba2;
-                transform: scale(1.02);
-            }
-            
-            .drag-drop p {
-                color: #666;
-                margin-bottom: 10px;
-                font-size: 1.1em;
-            }
-            
-            .drag-drop input[type="file"] {
-                display: none;
-            }
-            
-            #imagePreview {
-                margin-top: 20px;
-                text-align: center;
-            }
-            
-            #previewImg {
-                max-width: 100%;
-                max-height: 300px;
-                border-radius: 10px;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-                display: none;
-            }
-            
-            #imageInfo {
-                margin-top: 15px;
-                padding: 15px;
-                background: #f5f5f5;
-                border-radius: 5px;
-                color: #666;
-            }
-            
-            input[type="text"],
-            select,
-            textarea {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                font-family: Arial, sans-serif;
-                font-size: 1em;
-            }
-            
-            input:focus,
-            select:focus,
-            textarea:focus {
-                outline: none;
-                border-color: #667eea;
-                box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-            }
-            
-            textarea {
-                resize: vertical;
-                min-height: 80px;
-            }
-            
-            .button-group {
-                display: flex;
-                gap: 10px;
-                margin-top: 30px;
-            }
-            
-            button {
-                flex: 1;
-                padding: 12px 20px;
-                border: none;
-                border-radius: 5px;
-                font-size: 1em;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-weight: bold;
-            }
-            
-            .upload-btn {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-            }
-            
-            .upload-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            }
-            
-            .upload-btn:active {
-                transform: translateY(0);
-            }
-            
-            .cancel-btn {
-                background: #f0f0f0;
-                color: #333;
-            }
-            
-            .cancel-btn:hover {
-                background: #e0e0e0;
-            }
-            
-            .success-message {
-                display: none;
-                padding: 15px;
-                background: #d4edda;
-                color: #155724;
-                border-radius: 5px;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <a href="admin.html" class="back-btn">← Back to Admin Panel</a>
-            
-            <h1>🖼️ Upload Image</h1>
-            <p class="description">Upload images and manage image galleries for your portal</p>
-            
-            <div class="success-message" id="successMsg">
-                Image uploaded successfully!
-            </div>
-            
-            <form id="imageForm">
-                <div class="form-group">
-                    <label>Select Image:</label>
-                    <div class="drag-drop" id="dragDrop">
-                        <p style="font-size: 2em;">📸</p>
-                        <p>Drag & Drop your image here</p>
-                        <p style="font-size: 0.9em;">or click to browse</p>
-                        <input type="file" id="fileInput" accept="image/*">
-                    </div>
-                    <div id="imagePreview">
-                        <img id="previewImg" alt="Preview">
-                        <div id="imageInfo"></div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="imageName">Image Name/Title:</label>
-                    <input type="text" id="imageName" placeholder="Enter a descriptive name for this image" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="category">Category:</label>
-                    <select id="category" required>
-                        <option value="">Select Category</option>
-                        <option value="gallery">Gallery</option>
-                        <option value="banner">Banner</option>
-                        <option value="profile">Profile</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" placeholder="Enter a description for this image..."></textarea>
-                </div>
-                
-                <div class="button-group">
-                    <button type="submit" class="upload-btn">Upload Image</button>
-                    <button type="reset" class="cancel-btn">Clear Form</button>
-                </div>
-            </form>
-        </div>
-        
-        <script>
-            const dragDrop = document.getElementById('dragDrop');
-            const fileInput = document.getElementById('fileInput');
-            const previewImg = document.getElementById('previewImg');
-            const imageInfo = document.getElementById('imageInfo');
-            const form = document.getElementById('imageForm');
-            const successMsg = document.getElementById('successMsg');
-            
-            // Click to browse
-            dragDrop.addEventListener('click', () => fileInput.click());
-            
-            // Drag and drop events
-            dragDrop.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dragDrop.classList.add('dragover');
-            });
-            
-            dragDrop.addEventListener('dragleave', () => {
-                dragDrop.classList.remove('dragover');
-            });
-            
-            dragDrop.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dragDrop.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length > 0 && files[0].type.startsWith('image/')) {
-                    fileInput.files = files;
-                    displayImagePreview(files[0]);
-                } else {
-                    alert('Please drop an image file');
-                }
-            });
-            
-            // File input change
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    const file = e.target.files[0];
-                    if (file.type.startsWith('image/')) {
-                        displayImagePreview(file);
-                    } else {
-                        alert('Please select an image file');
-                        fileInput.value = '';
-                    }
-                }
-            });
-            
-            function displayImagePreview(file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    previewImg.src = e.target.result;
-                    previewImg.style.display = 'block';
-                    
-                    const sizeInKB = (file.size / 1024).toFixed(2);
-                    const dimensions = new Image();
-                    dimensions.onload = function() {
-                        imageInfo.innerHTML = `
-                            <strong>${file.name}</strong><br>
-                            Size: ${sizeInKB} KB | 
-                            Type: ${file.type} | 
-                            Dimensions: ${this.width}x${this.height}px
-                        `;
-                    };
-                    dimensions.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-            
-            // Form submission
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                if (!fileInput.files.length) {
-                    alert('Please select an image');
-                    return;
-                }
-                
-                if (!document.getElementById('imageName').value) {
-                    alert('Please enter an image name');
-                    return;
-                }
-                
-                // Simulate upload
-                successMsg.style.display = 'block';
-                
-                setTimeout(() => {
-                    form.reset();
-                    previewImg.style.display = 'none';
-                    imageInfo.innerHTML = '';
-                    successMsg.style.display = 'none';
-                }, 3000);
-            });
-        </script>
-    </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upload Image - GPD Admin Portal</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .nav {
+      background: #003366;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav .brand {
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      padding: 25px;
+      min-height: 70vh;
+      background: white;
+      margin: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .upload-box {
+      border: 2px dashed #003366;
+      padding: 40px;
+      text-align: center;
+      border-radius: 10px;
+      background: #f0f6ff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .upload-box.dragover {
+      background: #d6e6ff;
+      border-color: #002244;
+    }
+
+    .upload-box p {
+      margin-top: 10px;
+      color: #444;
+    }
+
+    #preview {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #preview img {
+      max-width: 200px;
+      border-radius: 10px;
+      margin-top: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    form label { display:block; margin-top:18px; font-weight:600; }
+    input[type=text] { width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; }
+
+    button {
+      margin-top: 20px;
+      background:#003366;
+      color:white;
+      padding:12px 18px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .hidden { display:none; }
+  </style>
+</head>
+
+<body>
+  <header class="nav">
+    <div class="brand">GPD Admin Portal</div>
+  </header>
+
+  <main class="container">
+    <h2>Upload Image</h2>
+    <p>Drag and drop an image or click the box to select from your device.</p>
+
+    <div id="dropArea" class="upload-box">
+      <strong>Drop Image Here</strong>
+      <p>or click to browse</p>
+    </div>
+
+    <input type="file" id="imageInput" accept="image/*" class="hidden" />
+
+    <div id="preview"></div>
+
+    <form id="imageForm">
+      <label for="imgName">Name on Image</label>
+      <input type="text" id="imgName" required placeholder="Enter name" />
+
+      <label for="imgDesignation">Designation</label>
+      <input type="text" id="imgDesignation" required placeholder="Enter designation" />
+
+      <button type="submit">Upload</button>
+    </form>
+
+    <div id="successModal" class="modal hidden">
+      <div style="background:white;padding:20px;border-radius:8px;min-width:300px;text-align:center">
+        <h3>Success</h3>
+        <p>Image uploaded successfully.</p>
+        <button onclick="document.getElementById('successModal').classList.add('hidden')">OK</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const dropArea = document.getElementById('dropArea');
+    const imageInput = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+
+    dropArea.addEventListener('click', () => imageInput.click());
+
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropArea.classList.add('dragover');
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.classList.remove('dragover');
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropArea.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      displayPreview(file);
+    });
+
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files[0];
+      displayPreview(file);
+    });
+
+    function displayPreview(file){
+      if(!file) return;
+      const reader = new FileReader();
+
+      reader.onload = function(e){
+        preview.innerHTML = `<img src="${e.target.result}" alt="Preview" />`;
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById('imageForm').addEventListener('submit', function(e){
+      e.preventDefault();
+
+      const name = document.getElementById('imgName').value;
+      const designation = document.getElementById('imgDesignation').value;
+
+      console.log('Uploading:', { name, designation });
+
+      document.getElementById('successModal').classList.remove('hidden');
+
+      this.reset();
+      preview.innerHTML = '';
+    });
+  </script>
+</body>
 </html>
