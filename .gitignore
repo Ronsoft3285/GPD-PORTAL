@@ -9,3 +9,21 @@
 .vscode/
 .DS_Store
 *.swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Runtime files
+database/
+uploads/
+*.db
+*.db-journal
+
+# Temporary files
+github clone.txt
+.venv/
+
