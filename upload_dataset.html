@@ -167,6 +167,56 @@
                 margin-bottom: 20px;
                 text-align: center;
             }
+            
+            .error-message {
+                display: none;
+                padding: 15px;
+                background: #f8d7da;
+                color: #721c24;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            
+            .loading-spinner {
+                display: none;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .spinner {
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                margin: 0 auto;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .upload-results {
+                display: none;
+                padding: 15px;
+                background: #e7f3ff;
+                border-left: 4px solid #667eea;
+                border-radius: 5px;
+                margin-bottom: 20px;
+            }
+            
+            .upload-results h3 {
+                color: #667eea;
+                margin-bottom: 10px;
+            }
+            
+            .upload-results p {
+                margin: 5px 0;
+                color: #333;
+            }
         </style>
     </head>
     <body>
@@ -176,9 +226,14 @@
             <h1>📁 Upload Dataset</h1>
             <p class="description">Upload complete datasets or batch files for bulk data management</p>
             
-            <div class="success-message" id="successMsg">
-                Dataset uploaded successfully!
+            <div class="error-message" id="errorMsg"></div>
+            
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Uploading and converting to database...</p>
             </div>
+            
+            <div class="upload-results" id="uploadResults"></div>
             
             <form id="datasetForm">
                 <div class="form-group">
@@ -186,7 +241,7 @@
                     <div class="drag-drop" id="dragDrop">
                         <p>Drag & Drop your file here</p>
                         <p style="font-size: 0.9em;">or click to browse</p>
-                        <input type="file" id="fileInput" accept=".csv,.xlsx,.json,.xml" style="display: none;">
+                        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
                     </div>
                     <p id="fileName" style="margin-top: 10px; color: #666; font-size: 0.9em;"></p>
                 </div>
@@ -198,7 +253,6 @@
                         <option value="students">Students</option>
                         <option value="pastors">Pastors</option>
                         <option value="campuses">Campuses</option>
-                        <option value="other">Other</option>
                     </select>
                 </div>
                 
@@ -219,7 +273,12 @@
             const fileInput = document.getElementById('fileInput');
             const fileName = document.getElementById('fileName');
             const form = document.getElementById('datasetForm');
-            const successMsg = document.getElementById('successMsg');
+            const errorMsg = document.getElementById('errorMsg');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const uploadResults = document.getElementById('uploadResults');
+            
+            // Configuration
+            const API_URL = 'http://localhost:5000';
             
             // Click to browse
             dragDrop.addEventListener('click', () => fileInput.click());
@@ -255,23 +314,82 @@
                 fileName.textContent = `📄 Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
             }
             
+            function showError(message) {
+                errorMsg.textContent = `❌ Error: ${message}`;
+                errorMsg.style.display = 'block';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 5000);
+            }
+            
+            function showLoading(show) {
+                loadingSpinner.style.display = show ? 'block' : 'none';
+            }
+            
+            function showResults(data) {
+                let html = `
+                    <h3>✅ Upload Complete</h3>
+                    <p><strong>Category:</strong> ${data.category}</p>
+                    <p><strong>Records Inserted:</strong> ${data.records_inserted}</p>
+                `;
+                
+                if (data.errors > 0) {
+                    html += `<p style="color: #d9534f;"><strong>Errors:</strong> ${data.errors}</p>`;
+                    if (data.error_details && data.error_details.length > 0) {
+                        html += '<details><summary>Show Errors</summary><pre style="background: #fff; padding: 10px; border-radius: 3px; overflow-x: auto;">';
+                        html += data.error_details.join('\n');
+                        html += '</pre></details>';
+                    }
+                }
+                
+                uploadResults.innerHTML = html;
+                uploadResults.style.display = 'block';
+            }
+            
             // Form submission
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
                 if (!fileInput.files.length) {
-                    alert('Please select a file');
+                    showError('Please select a file');
                     return;
                 }
                 
-                // Simulate upload
-                successMsg.style.display = 'block';
+                if (!document.getElementById('category').value) {
+                    showError('Please select a category');
+                    return;
+                }
                 
-                setTimeout(() => {
-                    form.reset();
-                    fileName.textContent = '';
-                    successMsg.style.display = 'none';
-                }, 3000);
+                errorMsg.style.display = 'none';
+                uploadResults.style.display = 'none';
+                showLoading(true);
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    formData.append('category', document.getElementById('category').value);
+                    formData.append('description', document.getElementById('description').value);
+                    
+                    const response = await fetch(`${API_URL}/api/upload-dataset`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    showLoading(false);
+                    
+                    if (response.ok && data.success) {
+                        showResults(data);
+                        form.reset();
+                        fileName.textContent = '';
+                    } else {
+                        showError(data.error || 'Upload failed');
+                    }
+                } catch (error) {
+                    showLoading(false);
+                    showError(`Connection error: ${error.message}`);
+                    console.error('Upload error:', error);
+                }
             });
         </script>
     </body>
