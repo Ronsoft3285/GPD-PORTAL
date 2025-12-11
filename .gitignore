@@ -1,0 +1,11 @@
+# Secrets and credentials
+*token*.txt
+*.env
+*.env.local
+*.pem
+*.key
+
+# IDE
+.vscode/
+.DS_Store
+*.swp
