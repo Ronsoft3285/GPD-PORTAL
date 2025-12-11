@@ -99,6 +99,39 @@ def get_data(category):
     else:
         return jsonify({'error': result['error']}), 400
 
+
+@app.route('/api/tables', methods=['GET'])
+def list_tables():
+    """Return list of tables with counts and up to 5 sample rows each"""
+    try:
+        import sqlite3
+        import os
+
+        db_path = db.database_path
+        conn = sqlite3.connect(db_path)
+        cur = conn.cursor()
+
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;")
+        tables = [r[0] for r in cur.fetchall()]
+
+        result = []
+        for t in tables:
+            try:
+                cur.execute(f'SELECT COUNT(*) FROM "{t}"')
+                count = cur.fetchone()[0]
+                cur.execute(f'SELECT * FROM "{t}" LIMIT 5')
+                rows = cur.fetchall()
+                # convert rows to lists so JSON serializable
+                rows_list = [list(r) for r in rows]
+                result.append({'table': t, 'count': count, 'sample': rows_list})
+            except Exception as e:
+                result.append({'table': t, 'error': str(e)})
+
+        conn.close()
+        return jsonify({'success': True, 'tables': result}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/upload-logs', methods=['GET'])
 def get_upload_logs():
     """Get upload history"""
