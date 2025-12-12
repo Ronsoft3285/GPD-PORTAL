@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GPD Portal</title>
+
+  <!-- Font Icons & Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- INLINE CSS -->
+  <link rel="stylesheet" href="css_file/style.css">
+</head>
+
+<body>
+  <header class="nav">
+    <div class="brand">
+      <i class="fas fa-database"></i> GPD DC Portal
+    </div>
+    <nav class="nav-menu">
+      <a data-view="home" class="nav-link active">Home</a>
+      <a data-view="search-data" class="nav-link">Search Data</a>
+      <a data-view="newsletter" class="nav-link">Newsletter</a>
+    </nav>
+    <button class="menu-toggle">
+      <i class="fas fa-bars"></i>
+    </button>
+  </header>
+
+  <main id="app" class="container">
+    <!-- HOME VIEW -->
+    <section id="home-view" class="view active">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <h1 class="hero-title">Welcome to GPD DC Portal</h1>
+          <p class="hero-subtitle">Streamlined Data Collection & Management Platform</p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary" data-view="search-data">
+              <i class="fas fa-search"></i> Search Data
+            </button>
+            <!-- Media Search button removed -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="features">
+        <h2 class="section-title">Key Features</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <h3>Search Data</h3>
+            <p>Find and access your data quickly with our powerful search capabilities and filters.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-image"></i>
+            </div>
+            <h3>Media Search</h3>
+            <p>Locate and manage media files with advanced search and organization tools.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3>Calendar</h3>
+            <p>Schedule and track your data collection activities with our integrated calendar.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-bell"></i>
+            </div>
+            <h3>Newsletter</h3>
+            <p>Stay updated with the latest news and insights delivered to your inbox.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats Section -->
+      <section class="stats">
+        <div class="stat-item">
+          <h3 class="stat-number">10K+</h3>
+          <p class="stat-label">Active Users</p>
+        </div>
+        <div class="stat-item">
+          <h3 class="stat-number">50M+</h3>
+          <p class="stat-label">Data Records</p>
+        </div>
+        <div class="stat-item">
+          <h3 class="stat-number">99.9%</h3>
+          <p class="stat-label">Uptime</p>
+        </div>
+        <div class="stat-item">
+          <h3 class="stat-number">24/7</h3>
+          <p class="stat-label">Support</p>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="cta">
+        <h2>Ready to Get Started?</h2>
+        <p>Join thousands of users who trust GPD Portal for their data needs.</p>
+        <button class="btn btn-primary btn-large" data-view="search-data">
+          <i class="fas fa-rocket"></i> Explore Now
+        </button>
+      </section>
+    </section>
+
+    <!-- SEARCH DATA VIEW -->
+    <section id="search-data-view" class="view">
+      <section class="dashboard-section search-dashboard">
+        <div class="search-inner">
+          <div class="search-box">
+            <input id="search-input-hero" type="text" class="search-input-large" placeholder="Enter name/designation/region to search ">
+            <button id="search-btn-hero" class="btn btn-primary search-btn"><i class="fas fa-search"></i> Search</button>
+          </div>
+        </div>
+      </section>
+      <!-- keep space after first container, then add white wide card -->
+      <section class="wide-card-wrap">
+        <div class="search-large-card">
+          <div class="card-icon">
+            <i class="fas fa-image"></i>
+          </div>
+          <h3 class="card-title">Media Search</h3>
+          <p class="card-desc">Locate and manage media files with advanced search and organization tools.</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- NEWSLETTER VIEW -->
+    <section id="newsletter-view" class="view">
+      <div class="page-header">
+        <h1 class="page-title">
+          <i class="fas fa-envelope"></i> Newsletter Management
+        </h1>
+        <p class="page-subtitle">Manage your newsletter subscriptions, view campaigns, and stay updated</p>
+      </div>
+
+      <!-- Newsletter Stats Section -->
+      <section class="newsletter-stats">
+        <div class="newsletter-stat-card">
+          <div class="stat-icon-lg">
+            <i class="fas fa-envelope-open"></i>
+          </div>
+          <div class="stat-content-lg">
+            <p class="stat-label">Total Subscribers</p>
+            <p class="stat-value-lg">24,563</p>
+            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> +12% this month</p>
+          </div>
+        </div>
+
+        <div class="newsletter-stat-card">
+          <div class="stat-icon-lg">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-content-lg">
+            <p class="stat-label">Open Rate</p>
+            <p class="stat-value-lg">42.5%</p>
+            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> +3.2% from last issue</p>
+          </div>
+        </div>
+
+        <div class="newsletter-stat-card">
+          <div class="stat-icon-lg">
+            <i class="fas fa-mouse-pointer"></i>
+          </div>
+          <div class="stat-content-lg">
+            <p class="stat-label">Click Rate</p>
+            <p class="stat-value-lg">18.9%</p>
+            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> +2.1% from last issue</p>
+          </div>
+        </div>
+
+        <div class="newsletter-stat-card">
+          <div class="stat-icon-lg">
+            <i class="fas fa-envelope-circle-check"></i>
+          </div>
+          <div class="stat-content-lg">
+            <p class="stat-label">Last Campaign</p>
+            <p class="stat-value-lg">Dec 10</p>
+            <p class="stat-change">Next scheduled: Dec 17</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter Subscription Section -->
+      <section class="dashboard-section">
+        <div class="section-header">
+          <h2>Your Subscription</h2>
+          
+             
+          
+        </div>
+
+        <div class="subscription-card">
+          <div class="subscription-info">
+            <h3>You are subscribed to:</h3>
+            <div class="subscription-list">
+              <label class="subscription-item">
+                <input type="checkbox" checked>
+                <div class="subscription-label">
+                  <strong>Weekly News & Updates</strong>
+                  <p>Get the latest news and important updates every Monday</p>
+                </div>
+              </label>
+              <label class="subscription-item">
+                <input type="checkbox" checked>
+                <div class="subscription-label">
+                  <strong>Monthly Reports</strong>
+                  <p>Comprehensive monthly reports delivered on the first day of each month</p>
+                </div>
+              </label>
+              <label class="subscription-item">
+                <input type="checkbox">
+                <div class="subscription-label">
+                  <strong>Product Updates</strong>
+                  <p>Stay informed about new features and product improvements</p>
+                </div>
+              </label>
+              <label class="subscription-item">
+                <input type="checkbox" checked>
+                <div class="subscription-label">
+                  <strong>Special Announcements</strong>
+                  <p>Important announcements and critical system notifications</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="subscription-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-save"></i> Save Preferences
+            </button>
+            <button class="btn btn-secondary">
+              <i class="fas fa-times"></i> Unsubscribe All
+            </button>
+          </div>
+        </div>
+      </section>
+
+      
+
+    <!-- SEARCH DATA VIEW -->
+    <!-- Quick Subscribe (placed outside 'Your Subscription') -->
+    <section class="newsletter-subscribe-outer">
+      <div class="newsletter-subscribe-wrap">
+        <form id="newsletter-subscribe-form" class="newsletter-subscribe" onsubmit="subscribeNewsletter(event)">
+          <div class="form-group">
+            <input id="newsletter-email" type="email" class="newsletter-email-input" placeholder="Subject line for the email" required>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary subscribe-btn"><i class="fas fa-paper-plane"></i> Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </section>
+    <section id="search-data-view" class="view">
+      <section class="dashboard-section search-dashboard">
+        <div class="search-inner">
+          <div class="search-box">
+            <input id="search-input-hero" type="text" class="search-input-large" placeholder=" Input word ">
+            <button id="search-btn-hero" class="btn btn-primary search-btn"><i class="fas fa-search"></i> Search</button>
+          </div>
+        </div>
+      </section>
+      <!-- keep space after first container, then add white wide card -->
+      <section class="wide-card-wrap">
+        <div class="search-large-card">
+          <div class="card-icon">
+            <i class="fas fa-image"></i>
+          </div>
+          <h3 class="card-title">Media Search</h3>
+          <p class="card-desc">Locate and manage media files with advanced search and organization tools.</p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>About GPD Portal</h4>
+        <p>A comprehensive platform for efficient data collection and management.</p>
+      </div>
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#" data-view="search-data">Search Data</a></li>
+          <!-- Media Search link removed -->
+          <!-- Calendar quick link removed -->
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p>Email: info@gdpportal.com</p>
+        <p>Phone: +1 (555) 123-4567</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © <span id="year"></span> GPD Portal · All rights reserved
+    </div>
+  </footer>
+
+  <div id="modal" class="modal hidden"></div>
+
+  <!-- INLINE JAVASCRIPT -->
+  <script>
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Navigation functionality
+    document.querySelectorAll('[data-view]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const viewName = link.getAttribute('data-view');
+        
+        // Hide all views
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        
+        // Show selected view
+        const targetView = document.getElementById(viewName + '-view');
+        if (targetView) {
+          targetView.classList.add('active');
+        }
+        
+        // Update active nav link
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        if (link.classList.contains('nav-link')) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Mobile menu toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    if (menuToggle) {
+      menuToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('open');
+      });
+    }
+
+    // Reset filters function
+    function resetFilters() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('data-type').value = '';
+      document.getElementById('date-from').value = '';
+      document.getElementById('date-to').value = '';
+      document.getElementById('status').value = '';
+      document.getElementById('sort-by').value = 'recent';
+    }
+
+    // Newsletter subscribe (quick) handler
+    function subscribeNewsletter(e) {
+      e.preventDefault();
+      const email = document.getElementById('newsletter-email').value.trim();
+      if (!email) return;
+      // simple feedback — replace with real submit logic as needed
+      alert('Subscribed: ' + email);
+      document.getElementById('newsletter-subscribe-form').reset();
+    }
+  </script>
+</body>
+</html>
