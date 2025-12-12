@@ -1,193 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Upload Image - GPD Admin Portal</title>
+  <title>Upload Photo - GPD Admin Portal</title>
+  <link rel="stylesheet" href="css_file/style.css" />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      color: #222;
-    }
-
-    .nav {
-      background: #003366;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .nav .brand {
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .container {
-      padding: 25px;
-      min-height: 70vh;
-      background: white;
-      margin: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
+    .back { color: #003366; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block; }
+    h1 { text-align: center; color: #003366; }
     .upload-box {
-      border: 2px dashed #003366;
-      padding: 40px;
+      border: 4px dashed #003366;
+      border-radius: 20px;
+      padding: 60px;
       text-align: center;
-      border-radius: 10px;
-      background: #f0f6ff;
+      background: linear-gradient(135deg, #f8fbff, #e8f4ff);
       cursor: pointer;
-      transition: 0.3s;
+      transition: 0.4s;
     }
-
-    .upload-box.dragover {
-      background: #d6e6ff;
-      border-color: #002244;
-    }
-
-    .upload-box p {
-      margin-top: 10px;
-      color: #444;
-    }
-
-    #preview {
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    #preview img {
-      max-width: 200px;
-      border-radius: 10px;
-      margin-top: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    form label { display:block; margin-top:18px; font-weight:600; }
-    input[type=text] { width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; }
-
-    button {
-      margin-top: 20px;
-      background:#003366;
-      color:white;
-      padding:12px 18px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      font-weight:bold;
-    }
-
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      height: 100vh;
-      width: 100vw;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-    }
-
-    .hidden { display:none; }
+    .upload-box:hover { background: #d0e8ff; }
+    .preview img { max-width: 300px; border-radius: 16px; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .form-group { margin: 25px 0; }
+    input[type=text] { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 1.1rem; }
+    .btn-upload { background: linear-gradient(135deg, #003366, #0066cc); color: white; padding: 16px 50px; border: none; border-radius: 50px; font-size: 1.2rem; cursor: pointer; }
   </style>
 </head>
-
 <body>
-  <header class="nav">
-    <div class="brand">GPD Admin Portal</div>
-  </header>
+<div class="container">
+  <a href="admin.html" class="back">Back</a>
+  <h1>Upload Photo</h1>
+  <p style="text-align:center; color:#666;">Enter the <strong>exact name</strong> from the database</p>
 
-  <main class="container">
-    <h2>Upload Image</h2>
-    <p>Drag and drop an image or click the box to select from your device.</p>
+  <div id="dropArea" class="upload-box">
+    <h2>Drop Image Here</h2>
+    <p>or click to select • JPG, PNG, WebP</p>
+    <input type="file" id="imgInput" accept="image/*" hidden />
+  </div>
 
-    <div id="dropArea" class="upload-box">
-      <strong>Drop Image Here</strong>
-      <p>or click to browse</p>
-    </div>
+  <div id="preview" style="text-align:center;"></div>
 
-    <input type="file" id="imageInput" accept="image/*" class="hidden" />
+  <div class="form-group">
+    <input type="text" id="name" placeholder="Full Name (Exact Match Required)" required />
+  </div>
+  <div class="form-group">
+    <input type="text" id="designation" placeholder="Designation (Optional)" />
+  </div>
 
-    <div id="preview"></div>
+  <div style="text-align:center;">
+    <button onclick="uploadImage()" class="btn-upload">Upload & Link Photo</button>
+  </div>
 
-    <form id="imageForm">
-      <label for="imgName">Name on Image</label>
-      <input type="text" id="imgName" required placeholder="Enter name" />
+  <div id="msg" style="margin-top:25px; text-align:center; font-size:1.2rem; font-weight:bold;"></div>
+</div>
 
-      <label for="imgDesignation">Designation</label>
-      <input type="text" id="imgDesignation" required placeholder="Enter designation" />
+<script>
+  const dropArea = document.getElementById('dropArea');
+  const imgInput = document.getElementById('imgInput');
+  const preview = document.getElementById('preview');
+  let file;
 
-      <button type="submit">Upload</button>
-    </form>
+  dropArea.onclick = () => imgInput.click();
+  imgInput.onchange = e => { if (e.target.files[0]) handleFile(e.target.files[0]); };
+  dropArea.ondrop = e => { e.preventDefault(); dropArea.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]); };
+  dropArea.ondragover = e => { e.preventDefault(); dropArea.classList.add('dragover'); };
+  dropArea.ondragleave = () => dropArea.classList.remove('dragover');
 
-    <div id="successModal" class="modal hidden">
-      <div style="background:white;padding:20px;border-radius:8px;min-width:300px;text-align:center">
-        <h3>Success</h3>
-        <p>Image uploaded successfully.</p>
-        <button onclick="document.getElementById('successModal').classList.add('hidden')">OK</button>
-      </div>
-    </div>
+  function handleFile(f) {
+    if (!f.type.startsWith('image/')) return alert("Please select an image");
+    file = f;
+    const reader = new FileReader();
+    reader.onload = e => preview.innerHTML = `<img src="${e.target.result}" alt="Preview" />`;
+    reader.readAsDataURL(f);
+  }
 
-  </main>
+  async function uploadImage() {
+    if (!file) return alert("Select an image");
+    const name = document.getElementById('name').value.trim();
+    if (!name) return alert("Name is required");
 
-  <script>
-    const dropArea = document.getElementById('dropArea');
-    const imageInput = document.getElementById('imageInput');
-    const preview = document.getElementById('preview');
+    const form = new FormData();
+    form.append('image', file);
+    form.append('name', name);
+    form.append('designation', document.getElementById('designation').value);
 
-    dropArea.addEventListener('click', () => imageInput.click());
-
-    dropArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropArea.classList.add('dragover');
-    });
-
-    dropArea.addEventListener('dragleave', () => {
-      dropArea.classList.remove('dragover');
-    });
-
-    dropArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropArea.classList.remove('dragover');
-      const file = e.dataTransfer.files[0];
-      displayPreview(file);
-    });
-
-    imageInput.addEventListener('change', () => {
-      const file = imageInput.files[0];
-      displayPreview(file);
-    });
-
-    function displayPreview(file){
-      if(!file) return;
-      const reader = new FileReader();
-
-      reader.onload = function(e){
-        preview.innerHTML = `<img src="${e.target.result}" alt="Preview" />`;
-      };
-
-      reader.readAsDataURL(file);
-    }
-
-    document.getElementById('imageForm').addEventListener('submit', function(e){
-      e.preventDefault();
-
-      const name = document.getElementById('imgName').value;
-      const designation = document.getElementById('imgDesignation').value;
-
-      console.log('Uploading:', { name, designation });
-
-      document.getElementById('successModal').classList.remove('hidden');
-
-      this.reset();
-      preview.innerHTML = '';
-    });
-  </script>
+    const res = await fetch('/api/upload-image', { method: 'POST', body: form });
+    const data = await res.json();
+    document.getElementById('msg').innerHTML = data.success
+      ? `<span style="color:green;">Success! Photo linked to ${name}</span>`
+      : `<span style="color:red;">Error: ${data.error}</span>`;
+  }
+</script>
 </body>
 </html>

@@ -1,219 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Upload Individual Data - GPD Admin Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Record - GPD Admin Portal</title>
+  <link rel="stylesheet" href="css_file/style.css" />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      color: #222;
-    }
-
-    .nav {
-      background: #003366;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .nav .brand {
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    .nav nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .nav nav a:hover {
-      text-decoration: underline;
-    }
-
-    .container {
-      padding: 25px;
-      min-height: 70vh;
-      background: white;
-      margin: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .footer {
-      background: #003366;
-      padding: 15px;
-      text-align: center;
-      color: white;
-      font-size: 14px;
-    }
-
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      height: 100vh;
-      width: 100vw;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-    }
-
-    .hidden { display: none; }
-
-    /* small form styles */
-    form label{display:block;margin:8px 0 6px;font-weight:600}
-    input[type=text]{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .button-group{display:flex;gap:10px;margin-top:18px}
-    button{padding:10px 14px;border-radius:6px;border:none;cursor:pointer}
-    .submit-btn{background:#003366;color:#fff}
-    .cancel-btn{background:#eee}
-    .note{color:#555;margin-top:8px}
-
+    .back { color: #003366; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block; }
+    h1 { text-align: center; color: #003366; }
+    .form-grid { display: grid; gap: 20px; max-width: 600px; margin: 0 auto; }
+    label { font-weight: bold; color: #003366; }
+    input, select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; }
+    input:focus, select:focus { border-color: #003366; outline: none; }
+    .btn-group { text-align: center; margin-top: 30px; }
+    .btn { padding: 14px 40px; background: #003366; color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 1.1rem; }
+    .btn:hover { background: #0066cc; }
   </style>
 </head>
 <body>
-  <header class="nav">
-    <div class="brand">GPD Admin Portal</div>
-    <nav>
-      <a href="#">Dashboard</a>
-      <a href="#">Records</a>
-      <a href="#">Settings</a>
-    </nav>
-  </header>
-
-  <main class="container">
-    <h2>Upload Individual Data</h2>
-    <p class="note">Choose a category and fill the fields. "Group Regional" currently has no extra questions.</p>
-
-    <form id="individualForm">
-      <label for="dataType">Category</label>
-      <select id="dataType" required onchange="updateFormFields()">
+<div class="container">
+  <a href="admin.html" class="back">Back</a>
+  <h1>Add Individual Record</h1>
+  <div class="form-grid">
+    <div>
+      <label>Category</label>
+      <select id="type" required>
         <option value="">Select Category</option>
-        <option value="regional">Regional</option>
-        <option value="group_regional">Group Regional</option>
+        <option value="regional">Regional/Zonal Secretary</option>
+        <option value="group_regional">Group Regional/RZM</option>
       </select>
-
-      <div id="regionalFields" class="hidden">
-        <div class="form-row" style="margin-top:12px">
-          <div>
-            <label for="region">Region</label>
-            <input type="text" id="region" placeholder="Enter region" required />
-          </div>
-          <div>
-            <label for="designation">Designation</label>
-            <input type="text" id="designation" placeholder="Enter designation" required />
-          </div>
-        </div>
-
-        <div style="margin-top:12px">
-          <label for="reg_name">Name</label>
-          <input type="text" id="reg_name" placeholder="Enter name" required />
-        </div>
-
-        <div class="form-row" style="margin-top:12px">
-          <div>
-            <label for="kc_id">KC ID</label>
-            <input type="text" id="kc_id" placeholder="Enter KC ID" required />
-          </div>
-          <div>
-            <label for="blw_zone">BLW Zone</label>
-            <input type="text" id="blw_zone" placeholder="Enter BLW Zone" required />
-          </div>
-        </div>
-      </div>
-
-      <div id="rzmFields" class="hidden" style="margin-top:12px">
-        <p><em>No questions provided yet for Group Regional.</em></p>
-      </div>
-
-      <div class="button-group">
-        <button type="submit" class="submit-btn">Add Record</button>
-        <button type="reset" class="cancel-btn">Clear</button>
-      </div>
-    </form>
-
-    <div id="successMsg" class="modal hidden">
-      <div style="background:white;padding:20px;border-radius:8px;min-width:300px;text-align:center">
-        <h3>Success</h3>
-        <p id="successText">Record added successfully.</p>
-        <div style="margin-top:12px">
-          <button onclick="closeModal()">OK</button>
-        </div>
-      </div>
     </div>
+    <div id="regionalFields" style="display:none;">
+      <label>Region</label><input type="text" id="region">
+      <label>Designation</label><input type="text" id="designation">
+      <label>Name</label><input type="text" id="name" required>
+      <label>KC ID</label><input type="text" id="kc_id">
+      <label>BLW Zone</label><input type="text" id="blw_zone">
+    </div>
+  </div>
 
-  </main>
+  <div class="btn-group">
+    <button onclick="addRecord()" class="btn">Add Record</button>
+  </div>
+  <div id="msg" style="margin-top:20px; text-align:center; font-weight:bold;"></div>
+</div>
 
-  <footer class="footer">GPD Portal — ©️ All rights reserved</footer>
+<script>
+  document.getElementById('type').onchange = function() {
+    document.getElementById('regionalFields').style.display = this.value === 'regional' ? 'block' : 'none';
+  };
 
-  <script>
-    function updateFormFields(){
-      const type = document.getElementById('dataType').value;
-      document.getElementById('regionalFields').classList.toggle('hidden', type !== 'regional');
-      document.getElementById('rzmFields').classList.toggle('hidden', type !== 'group_regional');
+  async function addRecord() {
+    const type = document.getElementById('type').value;
+    if (!type) return alert("Select category");
+    const payload = { type };
+    if (type === 'regional') {
+      payload.region = document.getElementById('region').value.trim();
+      payload.designation = document.getElementById('designation').value.trim();
+      payload.name = document.getElementById('name').value.trim();
+      payload.kc_id = document.getElementById('kc_id').value.trim();
+      payload.blw_zone = document.getElementById('blw_zone').value.trim();
+      if (!payload.name) return alert("Name is required");
     }
 
-    // Insert single record via API
-    async function insertToDB(record){
-      const API_URL = window.location.origin || 'http://localhost:5000';
-      try{
-        const resp = await fetch(API_URL + '/api/add-record', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(record)
-        });
-        return await resp.json();
-      }catch(err){
-        return { success: false, error: err.message };
-      }
-    }
-
-    function closeModal(){
-      document.getElementById('successMsg').classList.add('hidden');
-    }
-
-    document.getElementById('individualForm').addEventListener('submit', async function(e){
-      e.preventDefault();
-      const type = document.getElementById('dataType').value;
-      if(!type){ alert('Please select a category'); return; }
-
-      const payload = { type };
-      if(type === 'regional'){
-        payload.region = document.getElementById('region').value.trim();
-        payload.designation = document.getElementById('designation').value.trim();
-        payload.name = document.getElementById('reg_name').value.trim();
-        payload.kc_id = document.getElementById('kc_id').value.trim();
-        payload.blw_zone = document.getElementById('blw_zone').value.trim();
-      }
-
-      const result = await insertToDB(payload);
-      const modal = document.getElementById('successMsg');
-      const successText = document.getElementById('successText');
-      if(result && result.success){
-        successText.textContent = result.message || 'Record added successfully.';
-        modal.classList.remove('hidden');
-        console.log('DB Insert OK:', payload);
-        // reset form after success
-        document.getElementById('individualForm').reset();
-        updateFormFields();
-      } else {
-        const errMsg = result ? (result.error || result.message) : 'Unknown error';
-        successText.textContent = 'Failed: ' + errMsg;
-        modal.classList.remove('hidden');
-        console.error('DB Insert Failed:', errMsg);
-      }
+    const res = await fetch('/api/add-record', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
-  </script>
+    const data = await res.json();
+    document.getElementById('msg').innerHTML = data.success
+      ? `<span style="color:green;">Success! Record added.</span>`
+      : `<span style="color:red;">Error: ${data.error}</span>`;
+  }
+</script>
 </body>
 </html>

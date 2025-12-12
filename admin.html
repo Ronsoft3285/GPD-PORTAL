@@ -1,139 +1,116 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>GPD Admin Portal</title>
-        <link rel="stylesheet" href="css_file/style.css">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            body {
-                font-family: Arial, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                padding: 40px 20px;
-            }
-            
-            .container {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-            
-            .header {
-                text-align: center;
-                color: white;
-                margin-bottom: 50px;
-            }
-            
-            .header h1 {
-                font-size: 2.5em;
-                margin-bottom: 10px;
-            }
-            
-            .header p {
-                font-size: 1.1em;
-                opacity: 0.9;
-            }
-            
-            .panels-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 30px;
-                margin-bottom: 40px;
-            }
-            
-            .panel {
-                background: white;
-                border-radius: 15px;
-                padding: 30px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                transition: all 0.3s ease;
-                cursor: pointer;
-                text-align: center;
-            }
-            
-            .panel:hover {
-                transform: translateY(-10px);
-                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            }
-            
-            .panel-icon {
-                font-size: 3em;
-                margin-bottom: 15px;
-            }
-            
-            .panel h2 {
-                color: #333;
-                margin-bottom: 15px;
-                font-size: 1.5em;
-            }
-            
-            .panel p {
-                color: #666;
-                margin-bottom: 20px;
-                line-height: 1.5;
-            }
-            
-            .panel-btn {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                padding: 12px 30px;
-                border-radius: 5px;
-                font-size: 1em;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                text-decoration: none;
-                display: inline-block;
-            }
-            
-            .panel-btn:hover {
-                transform: scale(1.05);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            }
-            
-            .panel-btn:active {
-                transform: scale(0.98);
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1>📊 GPD Admin Portal</h1>
-                <p>Manage your data uploads efficiently</p>
-            </div>
-            
-            <div class="panels-grid">
-                <!-- Upload Dataset Panel -->
-                <div class="panel">
-                    <div class="panel-icon">📁</div>
-                    <h2>Upload Dataset</h2>
-                    <p>Upload complete datasets or batch files for bulk data management</p>
-                    <a href="upload_dataset.html" class="panel-btn">Go to Upload Dataset</a>
-                </div>
-                
-                <!-- Upload Individual Data Panel -->
-                <div class="panel">
-                    <div class="panel-icon">📝</div>
-                    <h2>Upload Data Individually</h2>
-                    <p>Add single records or entries one at a time with detailed forms</p>
-                    <a href="upload_individual.html" class="panel-btn">Go to Upload Data</a>
-                </div>
-                
-                <!-- Upload Image Panel -->
-                <div class="panel">
-                    <div class="panel-icon">🖼️</div>
-                    <h2>Upload Image</h2>
-                    <p>Upload images and manage image galleries for your portal</p>
-                    <a href="upload_image.html" class="panel-btn">Go to Upload Image</a>
-                </div>
-            </div>
-        </div>
-    </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPD Admin Portal</title>
+  <link rel="stylesheet" href="css_file/style.css" />
+  <style>
+    body { background: linear-gradient(135deg, #003366, #0066cc); min-height: 100vh; }
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      color: white;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .hero p { font-size: 1.3rem; opacity: 0.9; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      padding: 40px 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    .card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .card-icon {
+      font-size: 4rem;
+      padding: 30px 20px;
+      background: linear-gradient(135deg, #003366, #0066cc);
+      color: white;
+    }
+    .card-body {
+      padding: 25px;
+    }
+    .card h3 {
+      margin: 0 0 15px;
+      font-size: 1.6rem;
+      color: #003366;
+    }
+    .card p {
+      color: #555;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: linear-gradient(135deg, #003366, #0066cc);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0,102,204,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>GPD Admin Portal</h1>
+    <p>Powerful. Simple. Secure.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">Folder</div>
+      <div class="card-body">
+        <h3>Upload Dataset</h3>
+        <p>Import bulk records from Excel/CSV with smart mapping and duplicate protection.</p>
+        <a href="upload_dataset.html" class="btn">Open Dataset Upload</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">Person Add</div>
+      <div class="card-body">
+        <h3>Add Individual</h3>
+        <p>Add or update a single record with full control.</p>
+        <a href="upload_individual.html" class="btn">Add Record</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">Image</div>
+      <div class="card-body">
+        <h3>Upload Photo</h3>
+        <p>Link high-quality photos to existing records by name.</p>
+        <a href="upload_image.html" class="btn">Upload Image</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    GPD Admin Portal © 2025 • All Rights Reserved
+  </div>
+</body>
 </html>

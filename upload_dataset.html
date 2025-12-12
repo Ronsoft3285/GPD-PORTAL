@@ -1,417 +1,121 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>Upload Dataset - GPD Admin Portal</title>
-        <link rel="stylesheet" href="css_file/style.css">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            body {
-                font-family: Arial, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                padding: 40px 20px;
-            }
-            
-            .container {
-                max-width: 600px;
-                margin: 0 auto;
-                background: white;
-                padding: 40px;
-                border-radius: 15px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            }
-            
-            .back-btn {
-                display: inline-block;
-                margin-bottom: 20px;
-                color: #667eea;
-                text-decoration: none;
-                font-weight: bold;
-                cursor: pointer;
-            }
-            
-            .back-btn:hover {
-                text-decoration: underline;
-            }
-            
-            h1 {
-                color: #333;
-                margin-bottom: 10px;
-                text-align: center;
-            }
-            
-            .description {
-                color: #666;
-                text-align: center;
-                margin-bottom: 30px;
-                font-size: 0.95em;
-            }
-            
-            .form-group {
-                margin-bottom: 25px;
-            }
-            
-            label {
-                display: block;
-                margin-bottom: 8px;
-                color: #333;
-                font-weight: bold;
-            }
-            
-            .drag-drop {
-                border: 2px dashed #667eea;
-                padding: 40px 20px;
-                text-align: center;
-                border-radius: 10px;
-                background: #f8f9ff;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-            
-            .drag-drop:hover {
-                background: #f0f1ff;
-                border-color: #764ba2;
-            }
-            
-            .drag-drop.dragover {
-                background: #e8eaff;
-                border-color: #764ba2;
-            }
-            
-            .drag-drop p {
-                color: #666;
-                margin-bottom: 10px;
-            }
-            
-            input[type="file"],
-            select,
-            textarea {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                font-family: Arial, sans-serif;
-                font-size: 1em;
-            }
-            
-            input[type="file"] {
-                padding: 8px;
-            }
-            
-            select:focus,
-            textarea:focus,
-            input[type="file"]:focus {
-                outline: none;
-                border-color: #667eea;
-                box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-            }
-            
-            textarea {
-                resize: vertical;
-                min-height: 100px;
-            }
-            
-            .button-group {
-                display: flex;
-                gap: 10px;
-                margin-top: 30px;
-            }
-            
-            button {
-                flex: 1;
-                padding: 12px 20px;
-                border: none;
-                border-radius: 5px;
-                font-size: 1em;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-weight: bold;
-            }
-            
-            .upload-btn {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-            }
-            
-            .upload-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            }
-            
-            .upload-btn:active {
-                transform: translateY(0);
-            }
-            
-            .cancel-btn {
-                background: #f0f0f0;
-                color: #333;
-            }
-            
-            .cancel-btn:hover {
-                background: #e0e0e0;
-            }
-            
-            .success-message {
-                display: none;
-                padding: 15px;
-                background: #d4edda;
-                color: #155724;
-                border-radius: 5px;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-            
-            .error-message {
-                display: none;
-                padding: 15px;
-                background: #f8d7da;
-                color: #721c24;
-                border-radius: 5px;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-            
-            .loading-spinner {
-                display: none;
-                text-align: center;
-                padding: 20px;
-            }
-            
-            .spinner {
-                border: 4px solid #f3f3f3;
-                border-top: 4px solid #667eea;
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                animation: spin 1s linear infinite;
-                margin: 0 auto;
-            }
-            
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            
-            .upload-results {
-                display: none;
-                padding: 15px;
-                background: #e7f3ff;
-                border-left: 4px solid #667eea;
-                border-radius: 5px;
-                margin-bottom: 20px;
-            }
-            
-            .upload-results h3 {
-                color: #667eea;
-                margin-bottom: 10px;
-            }
-            
-            .upload-results p {
-                margin: 5px 0;
-                color: #333;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <a href="admin.html" class="back-btn">← Back to Admin Panel</a>
-            
-            <h1>📁 Upload Dataset</h1>
-            <p class="description">Upload complete datasets or batch files for bulk data management</p>
-            
-            <div class="error-message" id="errorMsg"></div>
-            
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner"></div>
-                <p>Uploading and converting to database...</p>
-            </div>
-            
-            <div class="upload-results" id="uploadResults"></div>
-            
-            <form id="datasetForm" method="POST" action="/upload" enctype="multipart/form-data">
-    <div class="form-group">
-        <label>Select Dataset File:</label>
-        <div class="drag-drop" id="dragDrop">
-            <p>Drag & Drop your file here</p>
-            <p style="font-size: 0.9em;">or click to browse</p>
-            <input type="file" id="fileInput" name="file" accept=".xlsx,.xls" style="display: none;">
-        </div>
-        <p id="fileName" style="margin-top: 10px; color: #666; font-size: 0.9em;"></p>
-    </div>
-    
-    <div class="form-group">
-        <label for="category">Category:</label>
-        <select id="category" name="category" required>
-            <option value="">Select Category</option>
-            <option value="regional">Regional/Zonal Sec</option>
-            <option value="group_regional">Group Regional/RZM</option>
-        </select>
-    </div>
-    
-    <div class="form-group">
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" placeholder="Enter a brief description of this dataset..."></textarea>
-    </div>
-    
-    <div class="button-group">
-        <button type="submit" class="upload-btn">Upload Dataset</button>
-        <button type="reset" class="cancel-btn">Clear Form</button>
-    </div>
-</form>
-
-<!-- Flash messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="{{ category }}-message" style="margin-top: 20px;">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-
-        </div>
-        
-        <script>
-    const dragDrop = document.getElementById('dragDrop');
-    const fileInput = document.getElementById('fileInput');
-    const fileName = document.getElementById('fileName');
-    const form = document.getElementById('datasetForm');
-    const errorMsg = document.getElementById('errorMsg');
-    const uploadResults = document.getElementById('uploadResults');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    
-    // --- File Selection Logic ---
-
-    // Click to browse
-    dragDrop.addEventListener('click', () => fileInput.click());
-    
-    // Drag and drop events
-    dragDrop.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dragDrop.classList.add('dragover');
-    });
-    
-    dragDrop.addEventListener('dragleave', () => {
-        dragDrop.classList.remove('dragover');
-    });
-    
-    dragDrop.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dragDrop.classList.remove('dragover');
-        const files = e.dataTransfer.files;
-        handleFiles(files);
-    });
-    
-    // File input change
-    fileInput.addEventListener('change', (e) => {
-        handleFiles(e.target.files);
-    });
-    
-    function handleFiles(files) {
-        if (files.length > 0) {
-            const f = files[0];
-            // Allow xls, xlsx, and csv
-            const ext = f.name.split('.').pop().toLowerCase();
-            if (!['xls','xlsx','csv'].includes(ext)) {
-                showError('Only Excel (.xlsx, .xls) or CSV files are allowed');
-                fileInput.value = ''; // Reset
-                fileName.textContent = '';
-                return;
-            }
-            // Manually set the files property if coming from drag-drop
-            if (fileInput.files !== files) {
-                fileInput.files = files;
-            }
-            displayFileName(f);
-        }
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upload Dataset - GPD Admin Portal</title>
+  <link rel="stylesheet" href="css_file/style.css" />
+  <style>
+    .back { color: #003366; text-decoration: none; font-weight: bold; }
+    .back:hover { text-decoration: underline; }
+    h1 { text-align: center; color: #003366; margin-bottom: 10px; }
+    .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
+    .upload-area {
+      border: 3px dashed #003366;
+      border-radius: 16px;
+      padding: 50px;
+      text-align: center;
+      background: #f8fbff;
+      cursor: pointer;
+      transition: 0.3s;
     }
-
-    function displayFileName(file) {
-        fileName.textContent = `📄 Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
-        // clear previous errors/results when new file selected
-        errorMsg.style.display = 'none';
-        uploadResults.style.display = 'none';
+    .upload-area:hover { background: #e8f4ff; border-color: #0066cc; }
+    .upload-area.dragover { background: #d0e8ff; }
+    .btn-upload {
+      background: linear-gradient(135deg, #003366, #0066cc);
+      color: white;
+      padding: 14px 40px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 20px;
     }
+    .result { margin-top: 20px; padding: 15px; border-radius: 10px; }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
+</head>
+<body>
 
-    // --- Helper Functions ---
+<div class="container">
+  <a href="admin.html" class="back">Back to Dashboard</a>
+  <h1>Upload Dataset</h1>
+  <p class="subtitle">Upload Excel or CSV files • Duplicates automatically skipped</p>
 
-    function showError(message) {
-        errorMsg.textContent = `❌ ${message}`;
-        errorMsg.style.display = 'block';
-        loadingSpinner.style.display = 'none';
+  <div id="dropArea" class="upload-area">
+    <h3>Drop your file here</h3>
+    <p>or click to browse • Only .xlsx, .xls, .csv allowed</p>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden />
+  </div>
+  <p id="fileName" style="text-align:center; margin:15px 0; font-weight:bold; color:#003366;"></p>
+
+  <div style="text-align:center;">
+    <button onclick="uploadFile()" class="btn-upload" id="uploadBtn" disabled>Upload Dataset</button>
+  </div>
+
+  <div id="result"></div>
+</div>
+
+<div class="footer">GPD Admin Portal © 2025</div>
+
+<script>
+  const dropArea = document.getElementById('dropArea');
+  const fileInput = document.getElementById('fileInput');
+  const fileName = document.getElementById('fileName');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const result = document.getElementById('result');
+
+  dropArea.onclick = () => fileInput.click();
+
+  ['dragover', 'dragenter'].forEach(e => dropArea.addEventListener(e, ev => {
+    ev.preventDefault();
+    dropArea.classList.add('dragover');
+  }));
+  ['dragleave', 'dragend', 'drop'].forEach(e => dropArea.addEventListener(e, ev => {
+    if (e !== 'drop') ev.preventDefault();
+    dropArea.classList.remove('dragover');
+  }));
+  dropArea.addEventListener('drop', e => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) handleFile(fileInput.files[0]);
+  });
+
+  function handleFile(file) {
+    const valid = ['xlsx', 'xls', 'csv'].some(ext => file.name.toLowerCase().endsWith(ext));
+    if (!valid) {
+      result.innerHTML = `<div class="result error">Invalid file type!</div>`;
+      return;
     }
+    fileName.textContent = `Selected: ${file.name}`;
+    uploadBtn.disabled = false;
+  }
 
-    function showSuccess(data) {
-        let html = `<h3>✅ Upload Complete</h3>`;
-        html += `<p><strong>Message:</strong> ${data.message}</p>`;
-        html += `<p><strong>Records Inserted:</strong> ${data.records_inserted}</p>`;
-        
-        if (data.errors > 0) {
-             html += `<p style="color:orange"><strong>Errors:</strong> ${data.errors} rows failed (check logs)</p>`;
-        }
-        
-        uploadResults.innerHTML = html;
-        uploadResults.style.display = 'block';
-        loadingSpinner.style.display = 'none';
-        
-        // Clear form
-        form.reset();
-        fileName.textContent = '';
+  async function uploadFile() {
+    if (!fileInput.files.length) return;
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('category', 'regional');
+
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = "Uploading...";
+
+    try {
+      const res = await fetch('/api/upload-dataset', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.success) {
+        result.innerHTML = `<div class="result success">Success! ${data.message}</div>`;
+      } else {
+        result.innerHTML = `<div class="result error">Error: ${data.error || 'Upload failed'}</div>`;
+      }
+    } catch (err) {
+      result.innerHTML = `<div class="result error">Network error</div>`;
     }
-
-    // --- Form Submission (The Real Upload) ---
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        // 1. Validation
-        if (!fileInput.files.length) {
-            showError('Please select a file first.');
-            return;
-        }
-
-        const category = document.getElementById('category').value;
-        if (!category) {
-            showError('Please select a category.');
-            return;
-        }
-
-        // 2. Prepare Data
-        const formData = new FormData();
-        formData.append('file', fileInput.files[0]);
-        formData.append('category', category);
-        formData.append('description', document.getElementById('description').value);
-
-        // 3. UI Updates
-        loadingSpinner.style.display = 'block';
-        errorMsg.style.display = 'none';
-        uploadResults.style.display = 'none';
-
-        // 4. Send Request to Backend
-        try {
-            const response = await fetch('/api/upload-dataset', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                showSuccess(result);
-            } else {
-                showError(result.error || 'Upload failed due to server error.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showError('Network error. Is the server running?');
-        }
-    });
+    uploadBtn.textContent = "Upload Dataset";
+  }
 </script>
-    </body>
+</body>
 </html>
